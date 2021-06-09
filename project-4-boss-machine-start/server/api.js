@@ -2,9 +2,9 @@ const express = require('express');
 const app = require('../server.js');
 const apiRouter = express.Router();
 
-/* const minionsRouter = require('./minions.js');
-apiRouter.use('/minions', minionsRouter);
-*/
+const meetingsRouter = require('./meetings.js');
+apiRouter.use('/meetings', meetingsRouter);
+
 const {createMeeting,
     getAllFromDatabase,
     getFromDatabaseById,
@@ -12,6 +12,8 @@ const {createMeeting,
     updateInstanceInDatabase,
     deleteFromDatabasebyId,
     deleteAllFromDatabase} = require('./db.js');
+
+const checkMillionDollarIdea = require('./checkMillionDollarIdea');
 
 apiRouter.get('/:category', (req, res) => {
     const allItems = getAllFromDatabase(req.params.category);
@@ -22,7 +24,7 @@ apiRouter.get('/:category', (req, res) => {
     }
 })
 
-apiRouter.post('/:category', (req, res) => {
+apiRouter.post('/:category', checkMillionDollarIdea, (req, res) => {
     const addedItem = addToDatabase(req.params.category, req.query);
     if (addedItem) {
         res.status(201).send(addedItem);
@@ -40,7 +42,7 @@ apiRouter.get('/:category/:itemId', (req, res) => {
     }
 })
 
-apiRouter.put('/:category/:itemId', (req, res) => {
+apiRouter.put('/:category/:itemId', checkMillionDollarIdea, (req, res) => {
     if(req.params.itemId) {
         req.query.id = req.params.itemId;
         const updatedItem = updateInstanceInDatabase(req.params.category, req.query);
@@ -61,6 +63,7 @@ apiRouter.delete('/:category/:itemId', (req, res) => {
         res.status(404).send();
     }
 })
+
 
 
 
